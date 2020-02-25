@@ -1,8 +1,11 @@
 package com.goldgov.kduck.security.principal.configuration;
 
+import com.goldgov.kduck.dao.DeleteArchiveHandler;
 import com.goldgov.kduck.security.principal.KduckSecurityPrincipalProperties;
 import com.goldgov.kduck.security.principal.filter.AuthenticatedUserFilter;
+import com.goldgov.kduck.security.principal.handler.SecurityDeleteArchiveHandler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -30,6 +33,11 @@ public class SecurityPrincipalConfiguration  extends WebSecurityConfigurerAdapte
         return new AuthenticatedUserFilter();
     }
 
+    @Bean
+    @ConditionalOnMissingBean(DeleteArchiveHandler.class)
+    public DeleteArchiveHandler securityDeleteArchiveHandler(){
+        return new SecurityDeleteArchiveHandler();
+    }
 
     @Configuration
     @EnableResourceServer

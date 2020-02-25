@@ -2,6 +2,7 @@ package com.goldgov.kduck.security.principal;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Date;
@@ -13,24 +14,21 @@ import java.util.Map;
  */
 public class AuthUser extends User {
 
-    private final String userId;
     private Date loginDate;
     private String loginIp;
 
     private Map details = new HashMap();
 
-    public AuthUser(String userId,String username, String password, Collection<? extends GrantedAuthority> authorities) {
+    public AuthUser(UserDetails userDetails){
+        super(userDetails.getUsername(), "", userDetails.isEnabled(),userDetails.isAccountNonExpired(),userDetails.isCredentialsNonExpired(),userDetails.isAccountNonLocked(),userDetails.getAuthorities());
+    }
+
+    public AuthUser(String username, String password, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, authorities);
-        this.userId = userId;
     }
 
-    public AuthUser(String userId,String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
+    public AuthUser(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
-        this.userId = userId;
-    }
-
-    public String getUserId() {
-        return userId;
     }
 
     public Date getLoginDate() {

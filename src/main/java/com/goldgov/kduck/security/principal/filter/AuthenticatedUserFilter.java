@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
@@ -50,9 +51,9 @@ public class AuthenticatedUserFilter extends GenericFilterBean {
             //TODO 如果没配置客户端user_info链接，默认执行本地请求或使用TokenStore？
             //TODO 创建登录成功事件，设置登录时间、IP以及清除登录失败记录
 
-            if (org.springframework.util.StringUtils.hasText(securityProperties.getUserInfoUri())){
+            String userInfoUri =securityProperties.getUserInfoUri();
+            if (userInfoUri.startsWith("http")){
 //                throw new IllegalArgumentException("Oauth2调用获取用户接口失败，缺少kduck.security.oauth2.client.provider.userInfoUri配置");
-                String userInfoUri =securityProperties.getUserInfoUri();
                 URI uri;
                 try {
                     uri = new URI(userInfoUri);
@@ -81,7 +82,7 @@ public class AuthenticatedUserFilter extends GenericFilterBean {
                                 authoritiesSet.add(new SimpleGrantedAuthority(authority));
                             }
                         }
-                        AuthUser authUser = new AuthUser(userInfo.getUserId(),userInfo.getUsername(),"",authoritiesSet);
+                        AuthUser authUser = new AuthUser(userInfo.getUsername(),"",authoritiesSet);
                         authUser.eraseCredentials();
                         authUser.setAllDetailsItem(userInfo.getDetails());
                         AuthUserContext.setAuthUser(authUser);
@@ -90,7 +91,7 @@ public class AuthenticatedUserFilter extends GenericFilterBean {
                 }
 
             } else {
-                throw new RuntimeException("未配置OAuth2的用户信息接口kduck.security.oauth2.client.provider.userInfoUri");
+                throw new RuntimeException("OAuth2的用户信息接口未配置或配置错误（kduck.security.oauth2.client.provider.userInfoUri）：" + userInfoUri);
             }
         }else{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -98,6 +99,14 @@ public class AuthenticatedUserFilter extends GenericFilterBean {
                 Object principal = authentication.getPrincipal();
                 if(principal instanceof AuthUser){
                     AuthUser authUser = (AuthUser)principal;
+                    if(userExtInfo != null) {
+                        ValueMap userExtInfo = this.userExtInfo.getUserExtInfo(authUser.getUsername());
+                        authUser.setAllDetailsItem(userExtInfo);
+                    }
+                    AuthUserContext.setAuthUser(authUser);
+                }else if(principal instanceof UserDetails){
+                    UserDetails userDetails = (UserDetails)principal;
+                    AuthUser authUser = new AuthUser(userDetails);
                     if(userExtInfo != null) {
                         ValueMap userExtInfo = this.userExtInfo.getUserExtInfo(authUser.getUsername());
                         authUser.setAllDetailsItem(userExtInfo);
@@ -151,7 +160,6 @@ public class AuthenticatedUserFilter extends GenericFilterBean {
 
     public static class AuthUserProxy {
 
-        private String userId;
         private String username;
         private List<String> authorities = Collections.emptyList();
         private boolean accountNonExpired;
@@ -166,7 +174,6 @@ public class AuthenticatedUserFilter extends GenericFilterBean {
         public AuthUserProxy(){}
 
         public AuthUserProxy(AuthUser authUser){
-            userId = authUser.getUserId();
             username = authUser.getUsername();
             Collection<GrantedAuthority> authorities = authUser.getAuthorities();
             if(authorities != null){
@@ -188,14 +195,6 @@ public class AuthenticatedUserFilter extends GenericFilterBean {
 
         public void setDetails(Map details) {
             this.details = details;
-        }
-
-        public String getUserId() {
-            return userId;
-        }
-
-        public void setUserId(String userId) {
-            this.userId = userId;
         }
 
         public String getUsername() {
