@@ -20,7 +20,7 @@ import org.springframework.web.filter.GenericFilterBean;
 
 @Configuration
 @EnableConfigurationProperties(KduckSecurityPrincipalProperties.class)
-@Order(200)
+@Order(500)
 public class SecurityPrincipalConfiguration  extends WebSecurityConfigurerAdapter {
 
     @Override
