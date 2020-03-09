@@ -1,7 +1,8 @@
 package com.goldgov.kduck.security.principal.configuration;
 
 import com.goldgov.kduck.dao.DeleteArchiveHandler;
-import com.goldgov.kduck.security.principal.KduckSecurityPrincipalProperties;
+import com.goldgov.kduck.security.principal.KduckSecurityPrincipalProperties.SecurityOauth2ClientProviderProperties;
+import com.goldgov.kduck.security.principal.KduckSecurityPrincipalProperties.SecurityOauth2ClientRegistrationProperties;
 import com.goldgov.kduck.security.principal.filter.AuthenticatedUserFilter;
 import com.goldgov.kduck.security.principal.handler.SecurityDeleteArchiveHandler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -19,7 +20,7 @@ import org.springframework.security.web.access.ExceptionTranslationFilter;
 import org.springframework.web.filter.GenericFilterBean;
 
 @Configuration
-@EnableConfigurationProperties(KduckSecurityPrincipalProperties.class)
+@EnableConfigurationProperties({SecurityOauth2ClientProviderProperties.class, SecurityOauth2ClientRegistrationProperties.class})
 @Order(500)
 public class SecurityPrincipalConfiguration  extends WebSecurityConfigurerAdapter {
 
