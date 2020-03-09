@@ -19,7 +19,7 @@
         <dependency>
             <groupId>com.goldgov</groupId>
             <artifactId>kduck-core</artifactId>
-            <version>1.0.20022015-SNAPSHOT</version>
+            <version>1.0.20030914-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
