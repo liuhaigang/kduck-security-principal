@@ -156,7 +156,7 @@ public class AuthenticatedUserFilter extends OncePerRequestFilter {
         Date expirationDate = new Date(Long.valueOf(details.get("expiration").toString()));
         String refreshToken = (String) details.get("refresh_token");
         String accessToken = null;
-        System.out.println(httpRequest.getRequestURI()+"，令牌过期时间：" + expirationDate);
+        System.out.println(httpRequest.getRequestURI()+"，令牌过期时间：" + expirationDate + ",刷新Token：" + refreshToken);
         if(expirationDate != null && expirationDate.before(new Date(System.currentTimeMillis()+600000))){
             if(refreshToken != null){
                 Map<String, String> postParameters = new HashMap<>();
