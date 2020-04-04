@@ -14,6 +14,7 @@ import java.util.Map;
  */
 public class AuthUser extends User {
 
+    private final String username;
     private Date loginDate;
     private String loginIp;
 
@@ -21,14 +22,17 @@ public class AuthUser extends User {
 
     public AuthUser(UserDetails userDetails){
         super(userDetails.getUsername(), "", userDetails.isEnabled(),userDetails.isAccountNonExpired(),userDetails.isCredentialsNonExpired(),userDetails.isAccountNonLocked(),userDetails.getAuthorities());
+        this.username = userDetails.getUsername();
     }
 
     public AuthUser(String username, String password, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, authorities);
+        this.username = username;
     }
 
     public AuthUser(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
+        this.username = username;
     }
 
     public Date getLoginDate() {
@@ -60,5 +64,10 @@ public class AuthUser extends User {
 
     public void setLoginDate(Date loginDate) {
         this.loginDate = loginDate;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
     }
 }

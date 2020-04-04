@@ -1,6 +1,7 @@
 package com.goldgov.kduck.security.principal.configuration;
 
 import com.goldgov.kduck.dao.DeleteArchiveHandler;
+import com.goldgov.kduck.security.configuration.HttpSecurityConfigurer;
 import com.goldgov.kduck.security.principal.KduckSecurityPrincipalProperties.SecurityOauth2ClientProviderProperties;
 import com.goldgov.kduck.security.principal.KduckSecurityPrincipalProperties.SecurityOauth2ClientRegistrationProperties;
 import com.goldgov.kduck.security.principal.filter.AuthenticatedUserFilter;
@@ -13,7 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.web.access.ExceptionTranslationFilter;
@@ -22,10 +23,13 @@ import org.springframework.web.filter.GenericFilterBean;
 @Configuration
 @EnableConfigurationProperties({SecurityOauth2ClientProviderProperties.class, SecurityOauth2ClientRegistrationProperties.class})
 @Order(500)
-public class SecurityPrincipalConfiguration  extends WebSecurityConfigurerAdapter {
+public class SecurityPrincipalConfiguration implements HttpSecurityConfigurer {// extends WebSecurityConfigurerAdapter {
+
+//    @Value("${kduck.security.ignored}")
+//    private String[] ignored;
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    public void configure(HttpSecurity http) throws Exception {
         http.addFilterAfter(authenticatedUserFilter(), ExceptionTranslationFilter.class);
     }
 
@@ -38,6 +42,31 @@ public class SecurityPrincipalConfiguration  extends WebSecurityConfigurerAdapte
     @ConditionalOnMissingBean(DeleteArchiveHandler.class)
     public DeleteArchiveHandler securityDeleteArchiveHandler(){
         return new SecurityDeleteArchiveHandler();
+    }
+
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+//        web.ignoring()
+//                .antMatchers("/**/*.png","/**/*.jpg","/**/*.gif","/**/*.bmp")
+//                .antMatchers("/**/*.css","/**/*.js")
+//
+//                .antMatchers("/swagger-ui.html")
+//                .antMatchers("/webjars/**")
+//                .antMatchers("/v2/**")
+//                .antMatchers("/swagger-resources/**")
+//                .antMatchers("/error")
+//                .antMatchers("/favicon.ico")
+
+                //TODO 该模块中不应该出现业务接口地址
+        web.ignoring().antMatchers("/account/credential/valid");
+
+//        if(ignored != null && ignored.length > 0){
+//            for (String i : ignored) {
+//                web.ignoring().antMatchers(i);
+//            }
+//        }
+
     }
 
     @Configuration

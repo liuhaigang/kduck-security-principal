@@ -46,6 +46,9 @@ public class AuthenticatedUserFilter extends OncePerRequestFilter {
     @Autowired(required = false)
     private UserExtInfo userExtInfo;
 
+    @Autowired(required = false)
+    private List<FilterInterceptor> filterInterceptors;
+
     private RestTemplate refreshTokenTemplate = new RestTemplate();
 
     @Override
@@ -53,8 +56,7 @@ public class AuthenticatedUserFilter extends OncePerRequestFilter {
             HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        String accessToken = extractToken(httpRequest);
+        String accessToken = extractToken(request);
         if(accessToken != null){
             //TODO 先判断缓存有没有
             //TODO 根据token调用认证服务的user_info接口得到认证用户并缓存，如果得到返回错误信息，比如token过期或无效，需要同时清除对应缓存
@@ -71,7 +73,7 @@ public class AuthenticatedUserFilter extends OncePerRequestFilter {
                     throw new ServletException("user_info的链接格式不合法：" + userInfoUri,e);
                 }
 
-                if(!httpRequest.getRequestURI().equals(uri.getPath())){
+                if(!request.getRequestURI().equals(uri.getPath())){
 
 
 
@@ -94,7 +96,7 @@ public class AuthenticatedUserFilter extends OncePerRequestFilter {
                     }
 
                     //判断是否需要刷新TOKEN
-                    String newToken = refreshToken(authUserProxy, response, httpRequest);
+                    String newToken = refreshToken(authUserProxy, response, request);
                     if(newToken != null){
                         accessToken = newToken;
                     }
@@ -143,8 +145,22 @@ public class AuthenticatedUserFilter extends OncePerRequestFilter {
 
         }
 
+        if(filterInterceptors != null){
+            for (FilterInterceptor filterInterceptor : filterInterceptors) {
+                if(!filterInterceptor.preHandle(request,response)){
+                    return;
+                }
+            }
+        }
+
         try{
             filterChain.doFilter(request,response);
+
+            if(filterInterceptors != null){
+                for (FilterInterceptor filterInterceptor : filterInterceptors) {
+                    filterInterceptor.postHandle(request,response);
+                }
+            }
         }finally {
             AuthUserContext.reset();
         }

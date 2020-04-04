@@ -5,7 +5,7 @@ package com.goldgov.kduck.security;
 import com.goldgov.kduck.service.ValueMap;
 
 /**
- * LiuHG
+ * 这是个覆盖适配类
  */
 public interface UserExtInfo {
 
