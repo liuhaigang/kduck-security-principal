@@ -66,6 +66,14 @@ public class AuthUser extends User {
         this.loginDate = loginDate;
     }
 
+    public String getUserId() {
+        return (String)details.get("userId");
+    }
+
+    public String getOrgId() {
+        return (String)details.get("orgId");
+    }
+
     @Override
     public String getUsername() {
         return username;
