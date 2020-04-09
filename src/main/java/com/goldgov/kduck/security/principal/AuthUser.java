@@ -74,6 +74,14 @@ public class AuthUser extends User {
         return (String)details.get("orgId");
     }
 
+    public String getAuthOrgId() {
+        String authOrgId = (String)details.get("authOrgId");
+        if(authOrgId == null){
+            authOrgId = getOrgId();
+        }
+        return authOrgId;
+    }
+
     @Override
     public String getUsername() {
         return username;
