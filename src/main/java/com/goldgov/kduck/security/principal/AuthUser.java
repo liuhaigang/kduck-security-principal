@@ -1,38 +1,45 @@
 package com.goldgov.kduck.security.principal;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * LiuHG
  */
-public class AuthUser extends User {
+public class AuthUser { //extends User {
+
 
     private final String username;
+    private final Collection<String> authorities;
+    private final boolean accountNonExpired;
+    private final boolean accountNonLocked;
+    private final boolean credentialsNonExpired;
+    private final boolean enabled;
+
     private Date loginDate;
     private String loginIp;
 
     private Map details = new HashMap();
 
-    public AuthUser(UserDetails userDetails){
-        super(userDetails.getUsername(), "", userDetails.isEnabled(),userDetails.isAccountNonExpired(),userDetails.isCredentialsNonExpired(),userDetails.isAccountNonLocked(),userDetails.getAuthorities());
-        this.username = userDetails.getUsername();
+    public AuthUser(String username){
+        this(username, Collections.emptyList());
     }
 
-    public AuthUser(String username, String password, Collection<? extends GrantedAuthority> authorities) {
-        super(username, password, authorities);
-        this.username = username;
+//    public AuthUser(UserDetails userDetails){
+//        super(userDetails.getUsername(), "", userDetails.isEnabled(),userDetails.isAccountNonExpired(),userDetails.isCredentialsNonExpired(),userDetails.isAccountNonLocked(),userDetails.getAuthorities());
+//        this.username = userDetails.getUsername();
+//    }
+
+    public AuthUser(String username, Collection<String> authorities) {
+        this(username, true, true, true, true, authorities);
     }
 
-    public AuthUser(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
-        super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
+    public AuthUser(String username, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<String> authorities) {
         this.username = username;
+        this.enabled = enabled;
+        this.accountNonExpired = accountNonExpired;
+        this.credentialsNonExpired = credentialsNonExpired;
+        this.accountNonLocked = accountNonLocked;
+        this.authorities = Collections.unmodifiableCollection(authorities);
     }
 
     public Date getLoginDate() {
@@ -82,8 +89,28 @@ public class AuthUser extends User {
         return authOrgId;
     }
 
-    @Override
     public String getUsername() {
         return username;
+    }
+
+
+    public Collection<String> getAuthorities() {
+        return authorities;
+    }
+
+    public boolean isAccountNonExpired() {
+        return accountNonExpired;
+    }
+
+    public boolean isAccountNonLocked() {
+        return accountNonLocked;
+    }
+
+    public boolean isCredentialsNonExpired() {
+        return credentialsNonExpired;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
     }
 }
