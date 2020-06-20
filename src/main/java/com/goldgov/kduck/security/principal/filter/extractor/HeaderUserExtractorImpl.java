@@ -2,12 +2,8 @@ package com.goldgov.kduck.security.principal.filter.extractor;
 
 import com.goldgov.kduck.security.principal.AuthUser;
 import com.goldgov.kduck.security.principal.filter.AuthUserExtractor;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 

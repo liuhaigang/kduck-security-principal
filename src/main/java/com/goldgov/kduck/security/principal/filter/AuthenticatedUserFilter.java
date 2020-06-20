@@ -36,7 +36,9 @@ public class AuthenticatedUserFilter extends OncePerRequestFilter {
             if(authUser != null){
                 if(userExtInfo != null) {
                     ValueMap userExtInfo = this.userExtInfo.getUserExtInfo(authUser.getUsername());
-                    authUser.setAllDetailsItem(userExtInfo);
+                    if(userExtInfo != null){
+                        authUser.setAllDetailsItem(userExtInfo);
+                    }
                 }
                 AuthUserContext.setAuthUser(authUser);
                 break;
