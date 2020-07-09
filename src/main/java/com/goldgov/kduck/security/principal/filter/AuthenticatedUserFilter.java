@@ -1,5 +1,6 @@
 package com.goldgov.kduck.security.principal.filter;
 
+import com.goldgov.kduck.cache.CacheHelper;
 import com.goldgov.kduck.security.UserExtInfo;
 import com.goldgov.kduck.security.principal.AuthUser;
 import com.goldgov.kduck.service.ValueMap;
@@ -15,6 +16,8 @@ import java.util.*;
 
 public class AuthenticatedUserFilter extends OncePerRequestFilter {
 
+    public static final String AUTH_USER_CACHE_NAME = "AUTH_USER";
+
     @Autowired
     private List<AuthUserExtractor> authUserExtractorList;
 
@@ -25,7 +28,6 @@ public class AuthenticatedUserFilter extends OncePerRequestFilter {
     private List<FilterInterceptor> filterInterceptors;
 
 
-
     @Override
     protected void doFilterInternal(
             HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -34,8 +36,12 @@ public class AuthenticatedUserFilter extends OncePerRequestFilter {
         for (AuthUserExtractor authUserExtractor : authUserExtractorList) {
             AuthUser authUser = authUserExtractor.extract(request, response);
             if(authUser != null){
-                if(userExtInfo != null) {
+                Map extInfo = CacheHelper.getByCacheName(AUTH_USER_CACHE_NAME, authUser.getUsername(),Map.class);
+                if(extInfo != null){
+                    authUser.setAllDetailsItem(extInfo);
+                }else if(userExtInfo != null) {
                     ValueMap userExtInfo = this.userExtInfo.getUserExtInfo(authUser.getUsername());
+                    CacheHelper.put(AUTH_USER_CACHE_NAME, authUser.getUsername(),userExtInfo);
                     if(userExtInfo != null){
                         authUser.setAllDetailsItem(userExtInfo);
                     }
