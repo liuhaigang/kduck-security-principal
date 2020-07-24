@@ -80,7 +80,7 @@ public class SecurityPrincipalConfiguration {// extends WebSecurityConfigurerAda
     @Configuration
     @ConditionalOnClass(WebSecurity.class)
     @Order(500)
-    public class SpringSecurityConfiguration implements HttpSecurityConfigurer {
+    public static class SpringSecurityConfiguration implements HttpSecurityConfigurer {
         //    @Value("${kduck.security.ignored}")
 //    private String[] ignored;
 
@@ -96,7 +96,7 @@ public class SecurityPrincipalConfiguration {// extends WebSecurityConfigurerAda
 
         @Override
         public void configure(HttpSecurity http) throws Exception {
-            http.addFilterAfter(authenticatedUserFilter(), ExceptionTranslationFilter.class);
+            http.addFilterAfter(new AuthenticatedUserFilter(), ExceptionTranslationFilter.class);
         }
 
 //        @Bean
@@ -138,13 +138,13 @@ public class SecurityPrincipalConfiguration {// extends WebSecurityConfigurerAda
 
     @Configuration
     @EnableResourceServer
-    @ConditionalOnClass(EnableResourceServer.class)
+    @ConditionalOnClass({ResourceServerConfigurerAdapter.class,EnableResourceServer.class})
     @ConditionalOnProperty(prefix="kduck.security.oauth2.resServer",name="enabled",havingValue = "true")
-    public class OAuthResourceServerConfiguration extends ResourceServerConfigurerAdapter {
+    public static class OAuthResourceServerConfiguration extends ResourceServerConfigurerAdapter {
 
         @Override
         public void configure(HttpSecurity http) throws Exception {
-            http.addFilterBefore(authenticatedUserFilter(), ExceptionTranslationFilter.class);
+            http.addFilterBefore(new AuthenticatedUserFilter(), ExceptionTranslationFilter.class);
         }
     }
 }

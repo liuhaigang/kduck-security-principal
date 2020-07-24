@@ -5,7 +5,6 @@ import com.goldgov.kduck.security.principal.AuthUser;
 import com.goldgov.kduck.security.principal.KduckSecurityPrincipalProperties.SecurityOauth2ClientProviderProperties;
 import com.goldgov.kduck.security.principal.KduckSecurityPrincipalProperties.SecurityOauth2ClientRegistrationProperties;
 import com.goldgov.kduck.security.principal.filter.AuthUserExtractor;
-import com.goldgov.kduck.security.principal.filter.AuthenticatedUserFilter.AuthUserContext;
 import com.goldgov.kduck.security.principal.filter.AuthenticatedUserFilter.AuthUserProxy;
 import com.goldgov.kduck.utils.ValueMapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
