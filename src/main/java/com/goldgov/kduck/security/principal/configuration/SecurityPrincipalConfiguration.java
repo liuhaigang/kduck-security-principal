@@ -10,6 +10,7 @@ import com.goldgov.kduck.security.principal.filter.extractor.HeaderUserExtractor
 import com.goldgov.kduck.security.principal.filter.extractor.OauthUserExtractorImpl;
 import com.goldgov.kduck.security.principal.filter.extractor.SessionUserExtractorImpl;
 import com.goldgov.kduck.security.principal.handler.SecurityDeleteArchiveHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -22,7 +23,8 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.web.access.ExceptionTranslationFilter;
-import org.springframework.web.filter.GenericFilterBean;
+
+import java.util.List;
 
 @Configuration
 @EnableConfigurationProperties({SecurityOauth2ClientProviderProperties.class, SecurityOauth2ClientRegistrationProperties.class})
@@ -37,8 +39,8 @@ public class SecurityPrincipalConfiguration {// extends WebSecurityConfigurerAda
 //    }
 
     @Bean
-    public GenericFilterBean authenticatedUserFilter(){
-        return new AuthenticatedUserFilter();
+    public AuthenticatedUserFilter authenticatedUserFilter(List<AuthUserExtractor> authUserExtractorList){
+        return new AuthenticatedUserFilter(authUserExtractorList);
     }
 
     @Bean
@@ -84,6 +86,9 @@ public class SecurityPrincipalConfiguration {// extends WebSecurityConfigurerAda
         //    @Value("${kduck.security.ignored}")
 //    private String[] ignored;
 
+        @Autowired
+        private AuthenticatedUserFilter authenticatedUserFilter;
+
         @Bean
         public AuthUserExtractor sessionUserExtractor(){
             return new SessionUserExtractorImpl();
@@ -96,7 +101,7 @@ public class SecurityPrincipalConfiguration {// extends WebSecurityConfigurerAda
 
         @Override
         public void configure(HttpSecurity http) throws Exception {
-            http.addFilterAfter(new AuthenticatedUserFilter(), ExceptionTranslationFilter.class);
+            http.addFilterAfter(authenticatedUserFilter, ExceptionTranslationFilter.class);
         }
 
 //        @Bean
@@ -125,7 +130,9 @@ public class SecurityPrincipalConfiguration {// extends WebSecurityConfigurerAda
 //                .antMatchers("/favicon.ico")
 
             //TODO 该模块中不应该出现业务接口地址
-            web.ignoring().antMatchers("/account/credential/valid");
+            web.ignoring().antMatchers("/account/cre" +
+                    "" +
+                    "dential/valid");
 
 //        if(ignored != null && ignored.length > 0){
 //            for (String i : ignored) {
@@ -142,9 +149,12 @@ public class SecurityPrincipalConfiguration {// extends WebSecurityConfigurerAda
     @ConditionalOnProperty(prefix="kduck.security.oauth2.resServer",name="enabled",havingValue = "true")
     public static class OAuthResourceServerConfiguration extends ResourceServerConfigurerAdapter {
 
+        @Autowired
+        private AuthenticatedUserFilter authenticatedUserFilter;
+
         @Override
         public void configure(HttpSecurity http) throws Exception {
-            http.addFilterBefore(new AuthenticatedUserFilter(), ExceptionTranslationFilter.class);
+            http.addFilterBefore(authenticatedUserFilter, ExceptionTranslationFilter.class);
         }
     }
 }

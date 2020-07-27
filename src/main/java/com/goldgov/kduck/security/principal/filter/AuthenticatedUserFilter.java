@@ -18,7 +18,6 @@ public class AuthenticatedUserFilter extends OncePerRequestFilter {
 
     public static final String AUTH_USER_CACHE_NAME = "AUTH_USER";
 
-    @Autowired
     private List<AuthUserExtractor> authUserExtractorList;
 
     @Autowired(required = false)
@@ -27,6 +26,9 @@ public class AuthenticatedUserFilter extends OncePerRequestFilter {
     @Autowired(required = false)
     private List<FilterInterceptor> filterInterceptors;
 
+    public AuthenticatedUserFilter(List<AuthUserExtractor> authUserExtractorList){
+        this.authUserExtractorList = authUserExtractorList;
+    }
 
     @Override
     protected void doFilterInternal(
