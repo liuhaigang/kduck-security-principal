@@ -6,7 +6,7 @@
 
     <groupId>com.goldgov</groupId>
     <artifactId>kduck-security-principal</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -19,7 +19,7 @@
         <dependency>
             <groupId>com.goldgov</groupId>
             <artifactId>kduck-core</artifactId>
-            <version>1.0.2</version>
+            <version>1.0.6</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -62,5 +62,24 @@
             <url>http://nexus.goldgov.com/nexus/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
