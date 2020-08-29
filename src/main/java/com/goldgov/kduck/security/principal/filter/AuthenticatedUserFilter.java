@@ -35,9 +35,11 @@ public class AuthenticatedUserFilter extends OncePerRequestFilter {
             HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+//        boolean extracted = false;
         for (AuthUserExtractor authUserExtractor : authUserExtractorList) {
             AuthUser authUser = authUserExtractor.extract(request, response);
             if(authUser != null){
+//                extracted = true;
                 Map extInfo = CacheHelper.getByCacheName(AUTH_USER_CACHE_NAME, authUser.getUsername(),Map.class);
                 if(extInfo != null){
                     authUser.setAllDetailsItem(extInfo);
@@ -52,6 +54,10 @@ public class AuthenticatedUserFilter extends OncePerRequestFilter {
                 break;
             }
         }
+
+//        if(!extracted){
+//            throw new IllegalArgumentException("没有适合的用户提取器，获取登录用户失败");
+//        }
 
         if(filterInterceptors != null){
             for (FilterInterceptor filterInterceptor : filterInterceptors) {

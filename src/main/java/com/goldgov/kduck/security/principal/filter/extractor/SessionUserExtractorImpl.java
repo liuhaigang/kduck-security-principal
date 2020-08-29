@@ -52,8 +52,6 @@ public class SessionUserExtractorImpl implements AuthUserExtractor {
             } else {
                 throw new IllegalArgumentException("无法识别的认证对象：" + principal);
             }
-        } else if(authentication != null && !(authentication instanceof AnonymousAuthenticationToken)){
-            throw new IllegalArgumentException("无法识别的认证对象类型：" + authentication);
         }
 
         return authUser;
