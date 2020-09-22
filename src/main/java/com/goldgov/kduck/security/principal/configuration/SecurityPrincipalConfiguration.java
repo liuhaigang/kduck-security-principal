@@ -13,8 +13,10 @@ import com.goldgov.kduck.security.principal.handler.SecurityDeleteArchiveHandler
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -79,12 +81,25 @@ public class SecurityPrincipalConfiguration {// extends WebSecurityConfigurerAda
 //
 //    }
 
+
+    @Configuration
+    @ConditionalOnMissingClass("org.springframework.security.config.annotation.web.builders.WebSecurity")
+    public static class KduckSecurityConfiguration {
+
+        @Bean
+        public FilterRegistrationBean userWebFilter(AuthenticatedUserFilter authenticatedUserFilter) {
+            FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+            registrationBean.setOrder(500);
+            registrationBean.setFilter(authenticatedUserFilter);
+            registrationBean.addUrlPatterns("/");
+            return registrationBean;
+        }
+    }
+
     @Configuration
     @ConditionalOnClass(WebSecurity.class)
     @Order(500)
     public static class SpringSecurityConfiguration implements HttpSecurityConfigurer {
-        //    @Value("${kduck.security.ignored}")
-//    private String[] ignored;
 
         @Autowired
         private AuthenticatedUserFilter authenticatedUserFilter;
@@ -118,27 +133,6 @@ public class SecurityPrincipalConfiguration {// extends WebSecurityConfigurerAda
 
         @Override
         public void configure(WebSecurity web) throws Exception {
-//        web.ignoring()
-//                .antMatchers("/**/*.png","/**/*.jpg","/**/*.gif","/**/*.bmp")
-//                .antMatchers("/**/*.css","/**/*.js")
-//
-//                .antMatchers("/swagger-ui.html")
-//                .antMatchers("/webjars/**")
-//                .antMatchers("/v2/**")
-//                .antMatchers("/swagger-resources/**")
-//                .antMatchers("/error")
-//                .antMatchers("/favicon.ico")
-
-            //TODO 该模块中不应该出现业务接口地址
-            web.ignoring().antMatchers("/account/cre" +
-                    "" +
-                    "dential/valid");
-
-//        if(ignored != null && ignored.length > 0){
-//            for (String i : ignored) {
-//                web.ignoring().antMatchers(i);
-//            }
-//        }
 
         }
     }
