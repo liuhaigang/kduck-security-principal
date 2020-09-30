@@ -19,6 +19,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -102,6 +103,7 @@ public class SecurityPrincipalConfiguration {// extends WebSecurityConfigurerAda
     public static class SpringSecurityConfiguration implements HttpSecurityConfigurer {
 
         @Autowired
+        @Lazy
         private AuthenticatedUserFilter authenticatedUserFilter;
 
         @Bean
