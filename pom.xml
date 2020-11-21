@@ -6,12 +6,12 @@
 
     <groupId>com.goldgov</groupId>
     <artifactId>kduck-security-principal</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.5.RELEASE</version>
+        <version>2.4.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -19,13 +19,13 @@
         <dependency>
             <groupId>com.goldgov</groupId>
             <artifactId>kduck-core</artifactId>
-            <version>1.0.7</version>
+            <version>1.1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.goldgov</groupId>
             <artifactId>kduck-security</artifactId>
-            <version>1.0.0</version>
+            <version>1.1.0</version>
             <scope>provided</scope>
         </dependency>
         <!--<dependency>
