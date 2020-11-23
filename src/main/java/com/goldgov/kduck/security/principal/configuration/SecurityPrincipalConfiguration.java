@@ -107,6 +107,9 @@ public class SecurityPrincipalConfiguration {// extends WebSecurityConfigurerAda
         private AuthenticatedUserFilter authenticatedUserFilter;
 
         @Bean
+        @ConditionalOnMissingClass({
+                "org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter",
+                "org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer"})
         public AuthUserExtractor sessionUserExtractor(){
             return new SessionUserExtractorImpl();
         }
