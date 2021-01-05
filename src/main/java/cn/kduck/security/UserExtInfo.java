@@ -1,11 +1,11 @@
-package com.goldgov.kduck.security;
+package cn.kduck.security;
 
 
 
-import com.goldgov.kduck.service.ValueMap;
+import cn.kduck.core.service.ValueMap;
 
 /**
- * LiuHG
+ * 这是个覆盖适配类
  */
 public interface UserExtInfo {
 

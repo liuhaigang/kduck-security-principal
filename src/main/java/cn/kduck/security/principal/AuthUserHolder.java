@@ -1,6 +1,6 @@
-package com.goldgov.kduck.security.principal;
+package cn.kduck.security.principal;
 
-import com.goldgov.kduck.security.principal.filter.AuthenticatedUserFilter.AuthUserContext;
+import cn.kduck.security.principal.filter.AuthenticatedUserFilter.AuthUserContext;
 
 public final class AuthUserHolder {
 

@@ -4,34 +4,42 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.goldgov</groupId>
+    <groupId>cn.kduck</groupId>
     <artifactId>kduck-security-principal</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1.0</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.5.RELEASE</version>
+        <version>2.4.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <dependencies>
         <dependency>
-            <groupId>com.goldgov</groupId>
+            <groupId>cn.kduck</groupId>
             <artifactId>kduck-core</artifactId>
-            <version>1.0.20022015-SNAPSHOT</version>
+            <version>1.1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>cn.kduck</groupId>
+            <artifactId>kduck-security</artifactId>
+            <version>1.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <!--<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
+            <scope>provided</scope>
+        </dependency>-->
 
-        <dependency>
+        <!--<dependency>
             <groupId>org.springframework.security.oauth.boot</groupId>
             <artifactId>spring-security-oauth2-autoconfigure</artifactId>
             <version>2.1.5.RELEASE</version>
-        </dependency>
+            <scope>provided</scope>
+        </dependency>-->
     </dependencies>
 
     <repositories>
@@ -60,5 +68,24 @@
             <url>http://nexus.goldgov.com/nexus/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
