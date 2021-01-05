@@ -1,15 +1,15 @@
-package com.goldgov.kduck.security.principal.configuration;
+package cn.kduck.security.principal.configuration;
 
-import com.goldgov.kduck.dao.DeleteArchiveHandler;
-import com.goldgov.kduck.security.configuration.HttpSecurityConfigurer;
-import com.goldgov.kduck.security.principal.KduckSecurityPrincipalProperties.SecurityOauth2ClientProviderProperties;
-import com.goldgov.kduck.security.principal.KduckSecurityPrincipalProperties.SecurityOauth2ClientRegistrationProperties;
-import com.goldgov.kduck.security.principal.filter.AuthUserExtractor;
-import com.goldgov.kduck.security.principal.filter.AuthenticatedUserFilter;
-import com.goldgov.kduck.security.principal.filter.extractor.HeaderUserExtractorImpl;
-import com.goldgov.kduck.security.principal.filter.extractor.OauthUserExtractorImpl;
-import com.goldgov.kduck.security.principal.filter.extractor.SessionUserExtractorImpl;
-import com.goldgov.kduck.security.principal.handler.SecurityDeleteArchiveHandler;
+import cn.kduck.security.principal.KduckSecurityPrincipalProperties.SecurityOauth2ClientProviderProperties;
+import cn.kduck.security.principal.KduckSecurityPrincipalProperties.SecurityOauth2ClientRegistrationProperties;
+import cn.kduck.security.principal.filter.AuthUserExtractor;
+import cn.kduck.security.principal.filter.AuthenticatedUserFilter;
+import cn.kduck.security.principal.filter.extractor.HeaderUserExtractorImpl;
+import cn.kduck.security.principal.filter.extractor.OauthUserExtractorImpl;
+import cn.kduck.security.principal.filter.extractor.SessionUserExtractorImpl;
+import cn.kduck.security.principal.handler.SecurityDeleteArchiveHandler;
+import cn.kduck.core.dao.DeleteArchiveHandler;
+import cn.kduck.security.configuration.HttpSecurityConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

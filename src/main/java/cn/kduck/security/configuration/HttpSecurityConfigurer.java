@@ -1,4 +1,4 @@
-package com.goldgov.kduck.security.configuration;
+package cn.kduck.security.configuration;
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;

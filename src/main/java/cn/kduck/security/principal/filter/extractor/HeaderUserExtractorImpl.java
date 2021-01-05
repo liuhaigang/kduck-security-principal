@@ -1,7 +1,7 @@
-package com.goldgov.kduck.security.principal.filter.extractor;
+package cn.kduck.security.principal.filter.extractor;
 
-import com.goldgov.kduck.security.principal.AuthUser;
-import com.goldgov.kduck.security.principal.filter.AuthUserExtractor;
+import cn.kduck.security.principal.AuthUser;
+import cn.kduck.security.principal.filter.AuthUserExtractor;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;

@@ -1,8 +1,8 @@
-package com.goldgov.kduck.security;
+package cn.kduck.security;
 
 
 
-import com.goldgov.kduck.service.ValueMap;
+import cn.kduck.core.service.ValueMap;
 
 /**
  * 这是个覆盖适配类

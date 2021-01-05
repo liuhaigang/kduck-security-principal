@@ -1,4 +1,4 @@
-package com.goldgov.kduck.security.principal.filter;
+package cn.kduck.security.principal.filter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

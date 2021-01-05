@@ -1,9 +1,9 @@
-package com.goldgov.kduck.security.principal.filter;
+package cn.kduck.security.principal.filter;
 
-import com.goldgov.kduck.cache.CacheHelper;
-import com.goldgov.kduck.security.UserExtInfo;
-import com.goldgov.kduck.security.principal.AuthUser;
-import com.goldgov.kduck.service.ValueMap;
+import cn.kduck.security.UserExtInfo;
+import cn.kduck.core.cache.CacheHelper;
+import cn.kduck.security.principal.AuthUser;
+import cn.kduck.core.service.ValueMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.filter.OncePerRequestFilter;
 

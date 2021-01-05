@@ -1,4 +1,4 @@
-package com.goldgov.kduck.security.principal;
+package cn.kduck.security.principal;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.StringUtils;

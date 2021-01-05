@@ -1,12 +1,12 @@
-package com.goldgov.kduck.security.principal.filter.extractor;
+package cn.kduck.security.principal.filter.extractor;
 
-import com.goldgov.kduck.cache.CacheHelper;
-import com.goldgov.kduck.security.principal.AuthUser;
-import com.goldgov.kduck.security.principal.KduckSecurityPrincipalProperties.SecurityOauth2ClientProviderProperties;
-import com.goldgov.kduck.security.principal.KduckSecurityPrincipalProperties.SecurityOauth2ClientRegistrationProperties;
-import com.goldgov.kduck.security.principal.filter.AuthUserExtractor;
-import com.goldgov.kduck.security.principal.filter.AuthenticatedUserFilter.AuthUserProxy;
-import com.goldgov.kduck.utils.ValueMapUtils;
+import cn.kduck.core.cache.CacheHelper;
+import cn.kduck.security.principal.AuthUser;
+import cn.kduck.security.principal.KduckSecurityPrincipalProperties.SecurityOauth2ClientProviderProperties;
+import cn.kduck.security.principal.KduckSecurityPrincipalProperties.SecurityOauth2ClientRegistrationProperties;
+import cn.kduck.security.principal.filter.AuthUserExtractor;
+import cn.kduck.security.principal.filter.AuthenticatedUserFilter.AuthUserProxy;
+import cn.kduck.core.utils.ValueMapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
