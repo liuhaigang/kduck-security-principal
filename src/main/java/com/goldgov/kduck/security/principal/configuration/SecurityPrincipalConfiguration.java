@@ -88,11 +88,11 @@ public class SecurityPrincipalConfiguration {// extends WebSecurityConfigurerAda
     public static class KduckSecurityConfiguration {
 
         @Bean
-        public FilterRegistrationBean userWebFilter(AuthenticatedUserFilter authenticatedUserFilter) {
+        public FilterRegistrationBean kduckAuthenticatedUserFilter(AuthenticatedUserFilter authenticatedUserFilter) {
             FilterRegistrationBean registrationBean = new FilterRegistrationBean();
             registrationBean.setOrder(500);
             registrationBean.setFilter(authenticatedUserFilter);
-            registrationBean.addUrlPatterns("/");
+            registrationBean.addUrlPatterns("/*");
             return registrationBean;
         }
     }
