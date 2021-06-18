@@ -89,7 +89,21 @@ public class AuthUser { //extends User {
         return authOrgId;
     }
 
+    /**
+     * 获取用户账号
+     * @return
+     * @deprecated 用getLoginName方法代替
+     */
+    @Deprecated
     public String getUsername() {
+        return username;
+    }
+
+    public String getUserDisplayName() {
+        return (String)details.get("userName");
+    }
+
+    public String getLoginName() {
         return username;
     }
 
