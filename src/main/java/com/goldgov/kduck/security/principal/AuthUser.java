@@ -107,7 +107,13 @@ public class AuthUser { //extends User {
         return username;
     }
 
-
+    /**
+     * 获取租户ID
+     * @return
+     */
+    public String getTenantId(){
+        return (String)details.get("tenantId");
+    }
     public Collection<String> getAuthorities() {
         return authorities;
     }
