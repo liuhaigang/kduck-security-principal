@@ -9,7 +9,6 @@ import cn.kduck.security.principal.filter.AuthenticatedUserFilter.AuthUserProxy;
 import cn.kduck.core.utils.ValueMapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -27,6 +26,10 @@ import java.util.Map;
 public class OauthUserExtractorImpl implements AuthUserExtractor {
 
     public static final String AUTH_USER_SUFFIX = ".AUTH_USER_SUFFIX";
+
+    public static final String ACCESS_TOKEN = "access_token";
+
+    public static final String BEARER_TYPE = "Bearer";
 
     @Autowired
     private SecurityOauth2ClientProviderProperties providerProperties;
@@ -65,7 +68,7 @@ public class OauthUserExtractorImpl implements AuthUserExtractor {
                     if(authUserProxy == null) {
 
                         ResponseEntity<AuthUserProxy> authUserEntity;
-                        String userInfoUrl = userInfoUri + "?" + OAuth2AccessToken.ACCESS_TOKEN + "=" + accessToken;
+                        String userInfoUrl = userInfoUri + "?" + ACCESS_TOKEN + "=" + accessToken;
                         try{
                             authUserEntity = restTemplate.getForEntity(userInfoUrl, AuthUserProxy.class);
                         }catch(HttpClientErrorException e){
@@ -140,7 +143,7 @@ public class OauthUserExtractorImpl implements AuthUserExtractor {
     protected String extractToken(HttpServletRequest request) {
         String token = extractHeaderToken(request);
         if (token == null) {
-            token = request.getParameter(OAuth2AccessToken.ACCESS_TOKEN);
+            token = request.getParameter(ACCESS_TOKEN);
         }
         return token;
     }
@@ -149,8 +152,8 @@ public class OauthUserExtractorImpl implements AuthUserExtractor {
         Enumeration<String> headers = request.getHeaders("Authorization");
         while (headers.hasMoreElements()) {
             String value = headers.nextElement();
-            if ((value.toLowerCase().startsWith(OAuth2AccessToken.BEARER_TYPE.toLowerCase()))) {
-                String authHeaderValue = value.substring(OAuth2AccessToken.BEARER_TYPE.length()).trim();
+            if ((value.toLowerCase().startsWith(BEARER_TYPE.toLowerCase()))) {
+                String authHeaderValue = value.substring(BEARER_TYPE.length()).trim();
                 int commaIndex = authHeaderValue.indexOf(',');
                 if (commaIndex > 0) {
                     authHeaderValue = authHeaderValue.substring(0, commaIndex);

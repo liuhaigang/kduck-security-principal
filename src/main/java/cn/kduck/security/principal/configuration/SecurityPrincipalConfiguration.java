@@ -57,6 +57,11 @@ public class SecurityPrincipalConfiguration {// extends WebSecurityConfigurerAda
         return new HeaderUserExtractorImpl();
     }
 
+    @Bean
+    public AuthUserExtractor oauthUserExtractor(){
+        return new OauthUserExtractorImpl();
+    }
+
 
 //    @Override
 //    public void configure(WebSecurity web) throws Exception {
@@ -112,11 +117,6 @@ public class SecurityPrincipalConfiguration {// extends WebSecurityConfigurerAda
                 "org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer"})
         public AuthUserExtractor sessionUserExtractor(){
             return new SessionUserExtractorImpl();
-        }
-
-        @Bean
-        public AuthUserExtractor oauthUserExtractor(){
-            return new OauthUserExtractorImpl();
         }
 
         @Override
