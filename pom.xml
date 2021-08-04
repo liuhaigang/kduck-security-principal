@@ -6,12 +6,12 @@
 
     <groupId>cn.kduck</groupId>
     <artifactId>kduck-security-principal</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.0</version>
+        <version>2.5.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -19,13 +19,13 @@
         <dependency>
             <groupId>cn.kduck</groupId>
             <artifactId>kduck-core</artifactId>
-            <version>1.1.0</version>
+            <version>1.1.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>cn.kduck</groupId>
             <artifactId>kduck-security</artifactId>
-            <version>1.1.0</version>
+            <version>1.1.1</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
