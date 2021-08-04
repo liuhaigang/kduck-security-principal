@@ -27,8 +27,8 @@ public class AuthenticatedUserFilter extends OncePerRequestFilter {
 
     @Autowired(required = false)
     private List<FilterInterceptor> filterInterceptors;
-    @Value("${kduck.security.ignored:''}")
-    private String[] ignoredURLs;
+    @Value("${kduck.security.ignored:'/proxy/**'}")
+    private String[] ignoredUrls;
 
     public AuthenticatedUserFilter(List<AuthUserExtractor> authUserExtractorList){
         this.authUserExtractorList = authUserExtractorList;
@@ -38,40 +38,34 @@ public class AuthenticatedUserFilter extends OncePerRequestFilter {
     protected void doFilterInternal(
             HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        boolean skip = false;
-        if (ignoredURLs!=null&&ignoredURLs.length>0){
+        if (ignoredUrls !=null&& ignoredUrls.length>0){
             AntPathMatcher antPathMatcher = new AntPathMatcher();
-            for (String ignoredURL : ignoredURLs) {
-                if (antPathMatcher.match(ignoredURL,request.getRequestURI())){
-                    skip=true;
-                    break;
-                }
-            }
-        }
-        if (!skip){
-            for (AuthUserExtractor authUserExtractor : authUserExtractorList) {
-                AuthUser authUser = authUserExtractor.extract(request, response);
-                if(authUser != null){
-                    //                extracted = true;
-                    Map extInfo = CacheHelper.getByCacheName(AUTH_USER_CACHE_NAME, authUser.getLoginName(),Map.class);
-                    if(extInfo != null){
-                        authUser.setAllDetailsItem(extInfo);
-                    }else if(userExtInfo != null) {
-                        ValueMap userExtInfo = this.userExtInfo.getUserExtInfo(authUser.getLoginName());
-                        CacheHelper.put(AUTH_USER_CACHE_NAME, authUser.getLoginName(),userExtInfo);
-                        if(userExtInfo != null){
-                            authUser.setAllDetailsItem(userExtInfo);
-                        }
-                    }
-                    AuthUserContext.setAuthUser(authUser);
-                    break;
+            for (String ignoredUrl : ignoredUrls) {
+                if (antPathMatcher.match(ignoredUrl,request.getRequestURI())){
+                    filterChain.doFilter(request,response);
+                    return;
                 }
             }
         }
 
-//        if(!extracted){
-//            throw new IllegalArgumentException("没有适合的用户提取器，获取登录用户失败");
-//        }
+        for (AuthUserExtractor authUserExtractor : authUserExtractorList) {
+            AuthUser authUser = authUserExtractor.extract(request, response);
+            if(authUser != null){
+                //                extracted = true;
+                Map extInfo = CacheHelper.getByCacheName(AUTH_USER_CACHE_NAME, authUser.getLoginName(),Map.class);
+                if(extInfo != null){
+                    authUser.setAllDetailsItem(extInfo);
+                }else if(userExtInfo != null) {
+                    ValueMap userExtInfo = this.userExtInfo.getUserExtInfo(authUser.getLoginName());
+                    CacheHelper.put(AUTH_USER_CACHE_NAME, authUser.getLoginName(),userExtInfo);
+                    if(userExtInfo != null){
+                        authUser.setAllDetailsItem(userExtInfo);
+                    }
+                }
+                AuthUserContext.setAuthUser(authUser);
+                break;
+            }
+        }
 
         if(filterInterceptors != null){
             for (FilterInterceptor filterInterceptor : filterInterceptors) {
