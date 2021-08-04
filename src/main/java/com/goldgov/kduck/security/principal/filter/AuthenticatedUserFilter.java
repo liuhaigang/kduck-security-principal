@@ -5,6 +5,8 @@ import com.goldgov.kduck.security.UserExtInfo;
 import com.goldgov.kduck.security.principal.AuthUser;
 import com.goldgov.kduck.service.ValueMap;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -25,6 +27,8 @@ public class AuthenticatedUserFilter extends OncePerRequestFilter {
 
     @Autowired(required = false)
     private List<FilterInterceptor> filterInterceptors;
+    @Value("${kduck.security.ignored:''}")
+    private String[] ignoredURLs;
 
     public AuthenticatedUserFilter(List<AuthUserExtractor> authUserExtractorList){
         this.authUserExtractorList = authUserExtractorList;
@@ -34,24 +38,34 @@ public class AuthenticatedUserFilter extends OncePerRequestFilter {
     protected void doFilterInternal(
             HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-
-//        boolean extracted = false;
-        for (AuthUserExtractor authUserExtractor : authUserExtractorList) {
-            AuthUser authUser = authUserExtractor.extract(request, response);
-            if(authUser != null){
-//                extracted = true;
-                Map extInfo = CacheHelper.getByCacheName(AUTH_USER_CACHE_NAME, authUser.getUsername(),Map.class);
-                if(extInfo != null){
-                    authUser.setAllDetailsItem(extInfo);
-                }else if(userExtInfo != null) {
-                    ValueMap userExtInfo = this.userExtInfo.getUserExtInfo(authUser.getUsername());
-                    CacheHelper.put(AUTH_USER_CACHE_NAME, authUser.getUsername(),userExtInfo);
-                    if(userExtInfo != null){
-                        authUser.setAllDetailsItem(userExtInfo);
-                    }
+        boolean skip = false;
+        if (ignoredURLs!=null&&ignoredURLs.length>0){
+            AntPathMatcher antPathMatcher = new AntPathMatcher();
+            for (String ignoredURL : ignoredURLs) {
+                if (antPathMatcher.match(ignoredURL,request.getRequestURI())){
+                    skip=true;
+                    break;
                 }
-                AuthUserContext.setAuthUser(authUser);
-                break;
+            }
+        }
+        if (!skip){
+            for (AuthUserExtractor authUserExtractor : authUserExtractorList) {
+                AuthUser authUser = authUserExtractor.extract(request, response);
+                if(authUser != null){
+                    //                extracted = true;
+                    Map extInfo = CacheHelper.getByCacheName(AUTH_USER_CACHE_NAME, authUser.getLoginName(),Map.class);
+                    if(extInfo != null){
+                        authUser.setAllDetailsItem(extInfo);
+                    }else if(userExtInfo != null) {
+                        ValueMap userExtInfo = this.userExtInfo.getUserExtInfo(authUser.getLoginName());
+                        CacheHelper.put(AUTH_USER_CACHE_NAME, authUser.getLoginName(),userExtInfo);
+                        if(userExtInfo != null){
+                            authUser.setAllDetailsItem(userExtInfo);
+                        }
+                    }
+                    AuthUserContext.setAuthUser(authUser);
+                    break;
+                }
             }
         }
 

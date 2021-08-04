@@ -24,7 +24,7 @@ public class HeaderUserExtractorImpl implements AuthUserExtractor {
     protected String extractHeaderUser(HttpServletRequest request) {
         String userName = request.getHeader(USER_HEADER_NAME);
         if(!StringUtils.hasText(userName)){
-            userName = request.getHeader(KCLOUD_USER_HEADER_NAME);;
+            userName = request.getHeader(KCLOUD_USER_HEADER_NAME);
         }
         return userName;
     }
