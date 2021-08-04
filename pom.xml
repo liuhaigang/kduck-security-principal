@@ -6,7 +6,7 @@
 
     <groupId>com.goldgov</groupId>
     <artifactId>kduck-security-principal</artifactId>
-    <version>1.1.6-SNAPSHOT</version>
+    <version>1.1.6</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
