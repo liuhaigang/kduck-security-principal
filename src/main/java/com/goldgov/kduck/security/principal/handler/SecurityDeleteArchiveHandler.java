@@ -15,6 +15,6 @@ public class SecurityDeleteArchiveHandler extends DefaultDeleteArchiveHandler {
     protected void initValue(ValueBean valueBean) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         AuthUser user = (AuthUser)auth.getPrincipal();
-        valueBean.setValue("userName",user.getUsername());
+        valueBean.setValue("userName",user.getLoginName());
     }
 }
