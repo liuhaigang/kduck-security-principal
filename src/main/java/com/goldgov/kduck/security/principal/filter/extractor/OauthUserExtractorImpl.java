@@ -97,6 +97,7 @@ public class OauthUserExtractorImpl implements AuthUserExtractor {
 //                    }
                     AuthUser authUser = new AuthUser(authUserProxy.getUsername(),authUserProxy.getAuthorities());
                     authUser.setAllDetailsItem(authUserProxy.getDetails());
+                    authUser.setToken(accessToken);
 //                    AuthUserContext.setAuthUser(authUser);
                     return authUser;
 

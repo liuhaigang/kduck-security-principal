@@ -2,8 +2,10 @@ package com.goldgov.kduck.security.principal.filter;
 
 import com.goldgov.kduck.cache.CacheHelper;
 import com.goldgov.kduck.security.UserExtInfo;
+import com.goldgov.kduck.security.UserManageInfo;
 import com.goldgov.kduck.security.principal.AuthUser;
 import com.goldgov.kduck.service.ValueMap;
+import io.micrometer.core.instrument.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.AntPathMatcher;
@@ -26,11 +28,14 @@ public class AuthenticatedUserFilter extends OncePerRequestFilter {
     private UserExtInfo userExtInfo;
 
     @Autowired(required = false)
+    private UserManageInfo userManageInfo;
+
+    @Autowired(required = false)
     private List<FilterInterceptor> filterInterceptors;
     @Value("${kduck.security.ignored:'/proxy/**'}")
     private String[] ignoredUrls;
 
-    public AuthenticatedUserFilter(List<AuthUserExtractor> authUserExtractorList){
+    public AuthenticatedUserFilter(List<AuthUserExtractor> authUserExtractorList) {
         this.authUserExtractorList = authUserExtractorList;
     }
 
@@ -38,11 +43,11 @@ public class AuthenticatedUserFilter extends OncePerRequestFilter {
     protected void doFilterInternal(
             HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        if (ignoredUrls !=null&& ignoredUrls.length>0){
+        if (ignoredUrls != null && ignoredUrls.length > 0) {
             AntPathMatcher antPathMatcher = new AntPathMatcher();
             for (String ignoredUrl : ignoredUrls) {
-                if (antPathMatcher.match(ignoredUrl,request.getRequestURI())){
-                    filterChain.doFilter(request,response);
+                if (antPathMatcher.match(ignoredUrl, request.getRequestURI())) {
+                    filterChain.doFilter(request, response);
                     return;
                 }
             }
@@ -50,40 +55,44 @@ public class AuthenticatedUserFilter extends OncePerRequestFilter {
 
         for (AuthUserExtractor authUserExtractor : authUserExtractorList) {
             AuthUser authUser = authUserExtractor.extract(request, response);
-            if(authUser != null){
+            if (authUser != null) {
                 //                extracted = true;
-                Map extInfo = CacheHelper.getByCacheName(AUTH_USER_CACHE_NAME, authUser.getLoginName(),Map.class);
-                if(extInfo != null){
+                Map extInfo = CacheHelper.getByCacheName(AUTH_USER_CACHE_NAME, authUser.getLoginName(), Map.class);
+                if (extInfo != null) {
                     authUser.setAllDetailsItem(extInfo);
-                }else if(userExtInfo != null) {
+                } else if (userExtInfo != null) {
                     ValueMap userExtInfo = this.userExtInfo.getUserExtInfo(authUser.getLoginName());
-                    CacheHelper.put(AUTH_USER_CACHE_NAME, authUser.getLoginName(),userExtInfo);
-                    if(userExtInfo != null){
+                    CacheHelper.put(AUTH_USER_CACHE_NAME, authUser.getLoginName(), userExtInfo);
+                    if (userExtInfo != null) {
                         authUser.setAllDetailsItem(userExtInfo);
                     }
+                }
+                if (userManageInfo != null&& StringUtils.isNotEmpty(authUser.getToken())) {
+                    String manageId = userManageInfo.getUserExtInfo(authUser.getLoginName(), authUser.getToken());
+                    authUser.setDetailsItem("authOrgId", manageId);
                 }
                 AuthUserContext.setAuthUser(authUser);
                 break;
             }
         }
 
-        if(filterInterceptors != null){
+        if (filterInterceptors != null) {
             for (FilterInterceptor filterInterceptor : filterInterceptors) {
-                if(!filterInterceptor.preHandle(request,response)){
+                if (!filterInterceptor.preHandle(request, response)) {
                     return;
                 }
             }
         }
 
-        try{
-            filterChain.doFilter(request,response);
+        try {
+            filterChain.doFilter(request, response);
 
-            if(filterInterceptors != null){
+            if (filterInterceptors != null) {
                 for (FilterInterceptor filterInterceptor : filterInterceptors) {
-                    filterInterceptor.postHandle(request,response);
+                    filterInterceptor.postHandle(request, response);
                 }
             }
-        }finally {
+        } finally {
             AuthUserContext.reset();
         }
 
@@ -169,9 +178,10 @@ public class AuthenticatedUserFilter extends OncePerRequestFilter {
 
         private boolean clientOnly = false;
 
-        public AuthUserProxy(){}
+        public AuthUserProxy() {
+        }
 
-        public AuthUserProxy(AuthUser authUser){
+        public AuthUserProxy(AuthUser authUser) {
             username = authUser.getUsername();
 //            Collection<String> authorities = authUser.getAuthorities();
 //            if(authorities != null){
@@ -256,7 +266,8 @@ public class AuthenticatedUserFilter extends OncePerRequestFilter {
     public static class AuthUserContext {
         private static final ThreadLocal<AuthUser> authUserThreadLocal = new ThreadLocal<>();
 
-        private AuthUserContext(){}
+        private AuthUserContext() {
+        }
 
         public static void setAuthUser(AuthUser authUser) {
             authUserThreadLocal.set(authUser);
@@ -266,7 +277,7 @@ public class AuthenticatedUserFilter extends OncePerRequestFilter {
             return authUserThreadLocal.get();
         }
 
-        static void reset(){
+        static void reset() {
             authUserThreadLocal.remove();
         }
 

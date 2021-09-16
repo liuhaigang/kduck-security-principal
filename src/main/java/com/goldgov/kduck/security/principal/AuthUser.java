@@ -17,6 +17,7 @@ public class AuthUser { //extends User {
 
     private Date loginDate;
     private String loginIp;
+    private String token;
 
     private Map details = new HashMap();
 
@@ -132,5 +133,13 @@ public class AuthUser { //extends User {
 
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }
