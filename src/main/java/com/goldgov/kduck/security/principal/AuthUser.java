@@ -17,11 +17,10 @@ public class AuthUser { //extends User {
 
     private Date loginDate;
     private String loginIp;
-    private String token;
 
     private Map details = new HashMap();
 
-    public AuthUser(String username){
+    public AuthUser(String username) {
         this(username, Collections.emptyList());
     }
 
@@ -52,18 +51,18 @@ public class AuthUser { //extends User {
     }
 
     public void setLoginIp(String loginIp) {
-        if(this.loginIp != null){
+        if (this.loginIp != null) {
             return;
         }
         this.loginIp = loginIp;
     }
 
-    public void setAllDetailsItem(Map<String,Object> detailsItemMap) {
+    public void setAllDetailsItem(Map<String, Object> detailsItemMap) {
         details.putAll(detailsItemMap);
     }
 
-    public void setDetailsItem(String name,Object value) {
-        details.put(name,value);
+    public void setDetailsItem(String name, Object value) {
+        details.put(name, value);
     }
 
     public Object getDetailsItem(String name) {
@@ -75,16 +74,16 @@ public class AuthUser { //extends User {
     }
 
     public String getUserId() {
-        return (String)details.get("userId");
+        return (String) details.get("userId");
     }
 
     public String getOrgId() {
-        return (String)details.get("orgId");
+        return (String) details.get("orgId");
     }
 
     public String getAuthOrgId() {
-        String authOrgId = (String)details.get("authOrgId");
-        if(authOrgId == null){
+        String authOrgId = (String) details.get("authOrgId");
+        if (authOrgId == null) {
             authOrgId = getOrgId();
         }
         return authOrgId;
@@ -92,6 +91,7 @@ public class AuthUser { //extends User {
 
     /**
      * 获取用户账号
+     *
      * @return
      * @deprecated 用getLoginName方法代替
      */
@@ -101,7 +101,7 @@ public class AuthUser { //extends User {
     }
 
     public String getUserDisplayName() {
-        return (String)details.get("userName");
+        return (String) details.get("userName");
     }
 
     public String getLoginName() {
@@ -110,11 +110,13 @@ public class AuthUser { //extends User {
 
     /**
      * 获取租户ID
+     *
      * @return
      */
-    public String getTenantId(){
-        return (String)details.get("tenantId");
+    public String getTenantId() {
+        return (String) details.get("tenantId");
     }
+
     public Collection<String> getAuthorities() {
         return authorities;
     }
@@ -136,10 +138,10 @@ public class AuthUser { //extends User {
     }
 
     public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
+        Object token = details.get("token");
+        if (token == null) {
+            return null;
+        }
+        return (String) token;
     }
 }

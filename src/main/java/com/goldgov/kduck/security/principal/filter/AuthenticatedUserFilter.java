@@ -2,7 +2,6 @@ package com.goldgov.kduck.security.principal.filter;
 
 import com.goldgov.kduck.cache.CacheHelper;
 import com.goldgov.kduck.security.UserExtInfo;
-import com.goldgov.kduck.security.UserManageInfo;
 import com.goldgov.kduck.security.principal.AuthUser;
 import com.goldgov.kduck.service.ValueMap;
 import io.micrometer.core.instrument.util.StringUtils;
@@ -26,9 +25,6 @@ public class AuthenticatedUserFilter extends OncePerRequestFilter {
 
     @Autowired(required = false)
     private UserExtInfo userExtInfo;
-
-    @Autowired(required = false)
-    private UserManageInfo userManageInfo;
 
     @Autowired(required = false)
     private List<FilterInterceptor> filterInterceptors;
@@ -61,15 +57,14 @@ public class AuthenticatedUserFilter extends OncePerRequestFilter {
                 if (extInfo != null) {
                     authUser.setAllDetailsItem(extInfo);
                 } else if (userExtInfo != null) {
+                    if (StringUtils.isNotEmpty(authUser.getToken())) {
+                        userExtInfo.setToken(authUser.getToken());
+                    }
                     ValueMap userExtInfo = this.userExtInfo.getUserExtInfo(authUser.getLoginName());
                     CacheHelper.put(AUTH_USER_CACHE_NAME, authUser.getLoginName(), userExtInfo);
                     if (userExtInfo != null) {
                         authUser.setAllDetailsItem(userExtInfo);
                     }
-                }
-                if (userManageInfo != null&& StringUtils.isNotEmpty(authUser.getToken())) {
-                    String manageId = userManageInfo.getUserExtInfo(authUser.getLoginName(), authUser.getToken());
-                    authUser.setDetailsItem("authOrgId", manageId);
                 }
                 AuthUserContext.setAuthUser(authUser);
                 break;

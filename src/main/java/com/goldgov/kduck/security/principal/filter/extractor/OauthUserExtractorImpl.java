@@ -43,49 +43,49 @@ public class OauthUserExtractorImpl implements AuthUserExtractor {
     private RestTemplate refreshTokenTemplate = new RestTemplate();
 
     @Override
-    public AuthUser extract(HttpServletRequest request, HttpServletResponse response) throws ServletException{
+    public AuthUser extract(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         String accessToken = extractToken(request);
-        if(accessToken != null){
+        if (accessToken != null) {
             //TODO 先判断缓存有没有
             //TODO 根据token调用认证服务的user_info接口得到认证用户并缓存，如果得到返回错误信息，比如token过期或无效，需要同时清除对应缓存
             //TODO 如果没配置客户端user_info链接，默认执行本地请求或使用TokenStore？
             //TODO 创建登录成功事件，设置登录时间、IP以及清除登录失败记录
 
             String userInfoUri = providerProperties.getUserInfoUri();
-            if (userInfoUri.startsWith("http")){
+            if (userInfoUri.startsWith("http")) {
 //                throw new IllegalArgumentException("Oauth2调用获取用户接口失败，缺少kduck.security.oauth2.client.provider.userInfoUri配置");
                 URI uri;
                 try {
                     uri = new URI(userInfoUri);
                 } catch (URISyntaxException e) {
-                    throw new ServletException("user_info的链接格式不合法：" + userInfoUri,e);
+                    throw new ServletException("user_info的链接格式不合法：" + userInfoUri, e);
                 }
 
-                if(!request.getRequestURI().equals(uri.getPath())){
+                if (!request.getRequestURI().equals(uri.getPath())) {
 
-                    AuthUserProxy authUserProxy = CacheHelper.get(accessToken + AUTH_USER_SUFFIX,AuthUserProxy.class);
+                    AuthUserProxy authUserProxy = CacheHelper.get(accessToken + AUTH_USER_SUFFIX, AuthUserProxy.class);
 
-                    if(authUserProxy == null) {
+                    if (authUserProxy == null) {
 
                         ResponseEntity<AuthUserProxy> authUserEntity;
                         String userInfoUrl = userInfoUri + "?" + ACCESS_TOKEN + "=" + accessToken;
-                        try{
+                        try {
                             authUserEntity = restTemplate.getForEntity(userInfoUrl, AuthUserProxy.class);
-                        }catch(HttpClientErrorException e){
-                            throw new ServletException("调用用户信息接口返回客户端错误（4xx）：CODE=" + e.getRawStatusCode() + "，URL=" + userInfoUrl,e);
-                        }catch(HttpServerErrorException e){
-                            throw new ServletException("调用用户信息接口返回服务端错误（5xx）：CODE=" + e.getRawStatusCode() + "，URL=" + userInfoUrl,e);
+                        } catch (HttpClientErrorException e) {
+                            throw new ServletException("调用用户信息接口返回客户端错误（4xx）：CODE=" + e.getRawStatusCode() + "，URL=" + userInfoUrl, e);
+                        } catch (HttpServerErrorException e) {
+                            throw new ServletException("调用用户信息接口返回服务端错误（5xx）：CODE=" + e.getRawStatusCode() + "，URL=" + userInfoUrl, e);
                         }
 
                         authUserProxy = authUserEntity.getBody();
-                        CacheHelper.put(accessToken + AUTH_USER_SUFFIX,authUserProxy,3600);
+                        CacheHelper.put(accessToken + AUTH_USER_SUFFIX, authUserProxy, 3600);
                     }
 
                     //判断是否需要刷新TOKEN
                     String newToken = refreshToken(authUserProxy, response, request);
-                    if(newToken != null){
+                    if (newToken != null) {
                         accessToken = newToken;
-                        CacheHelper.put(accessToken + AUTH_USER_SUFFIX,authUserProxy,3600);
+                        CacheHelper.put(accessToken + AUTH_USER_SUFFIX, authUserProxy, 3600);
                     }
 
 //                    List<String> authorities = authUserProxy.getAuthorities();
@@ -95,9 +95,9 @@ public class OauthUserExtractorImpl implements AuthUserExtractor {
 //                            authoritiesSet.add(new SimpleGrantedAuthority(authority));
 //                        }
 //                    }
-                    AuthUser authUser = new AuthUser(authUserProxy.getUsername(),authUserProxy.getAuthorities());
+                    AuthUser authUser = new AuthUser(authUserProxy.getUsername(), authUserProxy.getAuthorities());
                     authUser.setAllDetailsItem(authUserProxy.getDetails());
-                    authUser.setToken(accessToken);
+                    authUser.setDetailsItem("token", accessToken);
 //                    AuthUserContext.setAuthUser(authUser);
                     return authUser;
 
@@ -112,15 +112,15 @@ public class OauthUserExtractorImpl implements AuthUserExtractor {
 
     private String refreshToken(AuthUserProxy authUserProxy, HttpServletResponse response, HttpServletRequest httpRequest) {
         Map details = authUserProxy.getDetails();
-        if(details.isEmpty()){
+        if (details.isEmpty()) {
             return null;
         }
         Date expirationDate = new Date(Long.valueOf(details.get("expiration").toString()));
         String refreshToken = (String) details.get("refresh_token");
         String accessToken = null;
-        System.out.println(httpRequest.getRequestURI()+"，令牌过期时间：" + expirationDate + ",刷新Token：" + refreshToken);
-        if(expirationDate != null && expirationDate.before(new Date(System.currentTimeMillis()+600000))){
-            if(refreshToken != null){
+        System.out.println(httpRequest.getRequestURI() + "，令牌过期时间：" + expirationDate + ",刷新Token：" + refreshToken);
+        if (expirationDate != null && expirationDate.before(new Date(System.currentTimeMillis() + 600000))) {
+            if (refreshToken != null) {
                 Map<String, String> postParameters = new HashMap<>();
                 postParameters.put("client_id", registrationProperties.getClientId());
                 postParameters.put("client_secret", registrationProperties.getClientSecret());
@@ -137,9 +137,9 @@ public class OauthUserExtractorImpl implements AuthUserExtractor {
                 //FIXME define new token header
                 response.setHeader("New-Access-Token", accessToken);
 
-                details.put("refresh_token",refreshTokenValue);
-                details.put("expiration",expiration);
-                CacheHelper.put(accessToken + AUTH_USER_SUFFIX,authUserProxy,expiresInValue,3600);
+                details.put("refresh_token", refreshTokenValue);
+                details.put("expiration", expiration);
+                CacheHelper.put(accessToken + AUTH_USER_SUFFIX, authUserProxy, expiresInValue, 3600);
             }
         }
         return accessToken;
