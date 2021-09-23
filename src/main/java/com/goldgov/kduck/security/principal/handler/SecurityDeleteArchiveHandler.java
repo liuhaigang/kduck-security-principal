@@ -2,19 +2,21 @@ package com.goldgov.kduck.security.principal.handler;
 
 import com.goldgov.kduck.dao.DefaultDeleteArchiveHandler;
 import com.goldgov.kduck.security.principal.AuthUser;
+import com.goldgov.kduck.security.principal.AuthUserHolder;
 import com.goldgov.kduck.service.ValueBean;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.ObjectUtils;
 
-/**
- * LiuHG
- */
 public class SecurityDeleteArchiveHandler extends DefaultDeleteArchiveHandler {
+    public SecurityDeleteArchiveHandler() {
+    }
 
     @Override
     protected void initValue(ValueBean valueBean) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        AuthUser user = (AuthUser)auth.getPrincipal();
-        valueBean.setValue("userName",user.getLoginName());
+        AuthUser authUser = AuthUserHolder.getAuthUser();
+        if(!ObjectUtils.isEmpty(authUser)) {
+            valueBean.setValue("userName", authUser.getUsername());
+        }else {
+            super.getLogger().error("未能获取到用户信息。");
+        }
     }
 }

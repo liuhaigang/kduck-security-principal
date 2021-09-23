@@ -10,4 +10,8 @@ import com.goldgov.kduck.service.ValueMap;
 public interface UserExtInfo {
 
     ValueMap getUserExtInfo(String accountName);
+
+    void setToken(String token);
+
+    String getToken();
 }
